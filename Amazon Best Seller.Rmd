@@ -1,0 +1,95 @@
+---
+title: "Amazon Best Seller June 2021"
+author: "Damaris Wanyoike"
+date: "4/9/2022"
+output:
+  word_document: default
+  html_document: default
+  pdf_document: default
+---
+
+# Data Description
+The data set is about Amazon top 100 best selling products as of June 2021. The data is categorized into 8 columns;ASIN, Category, Product Link, No, of Sellers, Rating, Reviews Count and Price. The type of products in category include: Electronics, Video games, Camera & photo, Gift cards, Clothing, shoes & jewelry, Toys & games and Books. The data is stored in a csv format. Using the data set, we will hopefully answer the following questions. Which category of products is the most expensive? Which category of products has the most reviews? The rating averages for each product category.
+
+
+```{r, include=FALSE}
+#installing the following packages
+library(tidyverse)
+```
+
+```{r, echo=TRUE,results='hide'}
+#using read.csv to read data from a csv file
+AmazonBsel <- read.csv("Amazon_Best_Seller_2021_June.csv")
+```
+
+```{r, echo=TRUE, results='hide'}
+#Renaming the category column to product category
+rename(AmazonBsel, Productcategory = Category)
+
+```
+
+
+```{r AmazonBsel}
+#Removing the dollar sign form price.
+AmazonBsel$Price = as.numeric(gsub("\\$","",AmazonBsel$Price))
+
+#Removing the commas from Reviews.Count
+AmazonBsel$Reviews.Count <- as.numeric(gsub(",","",AmazonBsel$Reviews.Count))
+```
+
+This data frame has `r nrow(AmazonBsel)` rows and `r ncol(AmazonBsel)` columns. The names of the columns and a brief description of each are in the table below;
+
+
+```{r}
+text_tbl<- data.frame(
+  Names =c("ASIN","Category", "Productlink", "No.of.Sellers", "Rating", "Reviews.Count", "Price"),
+  Description =c("Amazon Standard Identification Number", "Electronics,Video games,Camera & photo, Gift cards,Clothing,shoes & jewelry, Toys & games, Books","Link with respect to the Amazon product","Number of sellers selling the product", "Star value that a shopper submits for the product/features","Number of reviews submitted by customers for the product"," The price of the product")
+)
+text_tbl
+```
+
+```{r}
+#picking three columns to use summary function
+Amazonsub<- select(AmazonBsel,Rating,Reviews.Count,Price)
+
+```
+
+```{r, inlcude=TRUE}
+#summary of the subset
+Summarytable <- summary(Amazonsub)
+Summarytable
+```
+
+
+```{r}
+#The plot shows the price averages for each product category. It helps depicts which product category are the most and least expensive.
+library(ggplot2)
+ggplot(data = AmazonBsel) +
+  geom_point(mapping = aes(x=Category, y=Price,color=Category)) +
+               scale_x_discrete(guide = guide_axis(n.dodge = 3))
+```
+
+```{r}
+#The bar chart depicts the rating averages for each product category.
+ggplot(data = AmazonBsel) +
+ geom_bar(mapping = aes(x= Category, y= Rating,fill=Category),stat = "identity") +
+  scale_x_discrete(guide = guide_axis(n.dodge = 3))
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
